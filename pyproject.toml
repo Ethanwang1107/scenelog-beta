@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scenelog"
+version = "0.10.0"
+description = "纪录片素材自动场记工具 — 本地离线素材整理与全文检索"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.0",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "torch>=2.0",
+    "torchaudio>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "soundfile>=0.12",
+    "requests>=2.28",
+    "scenedetect[opencv]>=0.6.3",
+    "opencv-python>=4.8",
+    "packaging>=23.0",
+    "speechbrain>=1.0,<1.2",
+]
+
+[project.scripts]
+scenelog = "scenelog.cli:main"
+scenelog-desktop = "scenelog.desktop:main"
+
+[tool.setuptools.packages.find]
+include = ["scenelog*"]
+
+[tool.setuptools.package-data]
+scenelog = [
+    "web_assets/*.html",
+    "web_assets/*.css",
+    "web_assets/*.js",
+    "web_assets/*.svg",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+]
+desktop = [
+    "pywebview>=5.4,<7",
+]
+build = [
+    "pyinstaller>=6.11,<7",
+    "pywebview>=5.4,<7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

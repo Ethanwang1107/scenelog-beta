@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>scenelog 本地工作台</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/apple.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="Scenelog 首页">
+        <img class="brand-mark" src="/assets/scenelog-mark.svg" alt="">
+        <span class="brand-name">Scenelog</span>
+      </a>
+      <p class="topbar-title">Scenelog</p>
+      <div class="topbar-meta">
+        <span class="version">v0.10.0</span>
+        <div class="privacy-status">
+          <span class="status-dot"></span>
+          本机运行
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section id="setup-banner" class="setup-banner" aria-labelledby="setup-title">
+      <div class="setup-summary">
+        <span id="setup-state" class="setup-state checking">正在检查</span>
+        <div>
+          <span class="section-kicker">首次运行检查</span>
+          <h2 id="setup-title">正在检查本机 AI 环境…</h2>
+          <p id="setup-description">Scenelog 的分析过程完全在这台 Mac 上运行。</p>
+        </div>
+        <button id="setup-toggle" class="button secondary" type="button"
+                aria-expanded="false" aria-controls="setup-details">
+          查看详情
+        </button>
+      </div>
+      <div id="setup-details" class="setup-details" hidden>
+        <div id="setup-checks" class="setup-checks"></div>
+        <p class="setup-footnote">
+          基础项目需要音视频工具、Whisper、Ollama 和文字模型；
+          画面、人物与声纹模型可按需安装。
+        </p>
+      </div>
+    </section>
+
+    <section class="project-band" aria-labelledby="project-title">
+      <div class="project-bar">
+        <div class="section-heading project-heading">
+          <span class="step-index">01</span>
+          <div>
+            <span class="section-kicker">本地智能场记</span>
+            <h1 id="project-title">每一段素材，<br>都值得被看见。</h1>
+            <p id="project-summary">选择本次需要处理的视频文件夹</p>
+          </div>
+        </div>
+        <div class="project-picker">
+          <div class="picker-heading">
+            <span>选择素材项目</span>
+            <small>所有分析均在本机完成</small>
+          </div>
+          <div class="path-control">
+            <div class="path-input-wrap">
+              <span class="path-icon" aria-hidden="true"></span>
+              <input id="source-dir" type="text" autocomplete="off"
+                     placeholder="/Users/你的名字/Desktop/测试素材"
+                     aria-label="素材目录路径">
+            </div>
+            <button id="choose-folder" class="button secondary" type="button">
+              选择文件夹
+            </button>
+            <button id="load-project" class="button primary" type="button">
+              载入项目
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace-band">
+      <div class="content-grid">
+        <section class="people-panel" aria-labelledby="people-title">
+        <div class="section-heading compact">
+          <span class="step-index">02</span>
+          <div>
+            <span class="section-kicker">人物资料</span>
+            <h2 id="people-title">关键人物</h2>
+            <p>登记需要在素材中识别的人物</p>
+          </div>
+          <span id="people-count" class="count">0</span>
+        </div>
+
+        <form id="person-form" class="person-form">
+          <label class="field-label" for="person-name">人物姓名</label>
+          <input id="person-name" name="name" type="text"
+                 placeholder="例如：张三" maxlength="40" required>
+          <label class="field-label" for="person-photos">参考照片</label>
+          <label class="upload-zone" for="person-photos">
+            <input id="person-photos" name="photos" type="file"
+                   accept="image/jpeg,image/png,image/webp" multiple required>
+            <span class="upload-symbol" aria-hidden="true">
+              <span></span>
+            </span>
+            <span class="upload-copy">
+              <strong>添加参考照片</strong>
+              <span id="upload-caption">JPG、PNG 或 WebP</span>
+            </span>
+          </label>
+          <div id="photo-previews" class="photo-previews" aria-live="polite"></div>
+          <button id="add-person" class="button primary full" type="submit">
+            登记人物
+          </button>
+        </form>
+
+        <div id="people-list" class="people-list">
+          <div class="empty-state">载入素材目录后显示人物名单</div>
+        </div>
+        </section>
+
+        <section class="run-panel" aria-labelledby="run-title">
+        <div class="section-heading compact">
+          <span class="step-index">03</span>
+          <div>
+            <span class="section-kicker">分析控制台</span>
+            <h2 id="run-title">处理素材</h2>
+            <p id="run-caption">分析画面、人物与动作关系</p>
+          </div>
+          <span id="task-badge" class="task-badge idle">未运行</span>
+        </div>
+
+        <div class="metrics" aria-label="项目状态">
+          <div>
+            <strong id="media-count">-</strong>
+            <span>素材</span>
+          </div>
+          <div>
+            <strong id="processed-count">-</strong>
+            <span>已完成</span>
+          </div>
+          <div>
+            <strong id="failed-count">-</strong>
+            <span>失败</span>
+          </div>
+        </div>
+
+        <div class="run-options">
+          <label class="toggle-row">
+            <span>
+              <strong>画面理解</strong>
+              <small>分析关键帧中的事件与环境</small>
+            </span>
+            <input id="vision-enabled" type="checkbox" checked>
+            <i aria-hidden="true"></i>
+          </label>
+          <label class="toggle-row">
+            <span>
+              <strong>人物识别</strong>
+              <small>逐秒识别身份，连续帧判断谁对谁做了什么</small>
+            </span>
+            <input id="people-enabled" type="checkbox" checked>
+            <i aria-hidden="true"></i>
+          </label>
+        </div>
+
+        <div class="run-actions">
+          <button id="start-process" class="button primary run-button" type="button" disabled>
+            <span class="play-symbol" aria-hidden="true"></span>
+            开始处理
+          </button>
+          <button id="stop-process" class="button danger icon-button" type="button"
+                  title="停止处理" aria-label="停止处理" disabled>
+            <span class="stop-symbol" aria-hidden="true"></span>
+          </button>
+          <a id="download-excel" class="button secondary download-button" href="#"
+             aria-disabled="true">
+            <span class="download-symbol" aria-hidden="true"></span>
+            下载场记表
+          </a>
+        </div>
+
+        <div class="log-header">
+          <span><i class="log-status-dot"></i>运行日志</span>
+          <button id="clear-log" class="text-button" type="button">清空</button>
+        </div>
+        <pre id="process-log" class="process-log" aria-live="polite">等待开始处理…</pre>
+        </section>
+      </div>
+    </section>
+
+    <section class="search-band">
+      <div class="search-panel">
+        <div class="section-heading compact">
+          <span class="step-index">04</span>
+          <div>
+            <span class="section-kicker">素材检索</span>
+            <h2>检索素材</h2>
+            <p>搜索人物、动作、对白或画面内容</p>
+          </div>
+          <span id="search-count" class="search-count"></span>
+        </div>
+        <form id="search-form" class="search-form">
+          <span class="search-symbol" aria-hidden="true"></span>
+          <input id="search-input" type="search"
+                 placeholder="搜索人物、动作或对白" aria-label="检索内容">
+          <button class="button dark" type="submit">搜索</button>
+        </form>
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
